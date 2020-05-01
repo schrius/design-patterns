@@ -1,5 +1,7 @@
 package factory
 
+import "fmt"
+
 type (
 	mongoDB struct {
 		database map[string]string
@@ -10,7 +12,7 @@ type (
 	}
 
 	file struct {
-		name string
+		name    string
 		content string
 	}
 
@@ -44,7 +46,7 @@ func (mdb mongoDB) GetData(query string) string {
 	return mdb.database[query]
 }
 
-func (sql sqlite) getData(query string) string {
+func (sql sqlite) GetData(query string) string {
 	if _, ok := sql.database[query]; !ok {
 		return ""
 	}
@@ -63,7 +65,7 @@ func (sql sqlite) PutData(query string, data string) {
 
 func (ntfs ntfs) CreateFile(path string) {
 	file := file{content: "NTFS file", name: path}
-	ntfs.file[path] = file
+	ntfs.files[path] = file
 	fmt.Println("NTFS")
 }
 
@@ -89,7 +91,7 @@ func (ext4 ext4) FindFile(path string) file {
 	return ext4.files[path]
 }
 
-func FilesystemmFactory(env string) interface{} {
+func FilesystemFactory(env string) interface{} {
 	switch env {
 	case "production":
 		return ntfs{
@@ -123,8 +125,8 @@ func AbstractFactory(fact string) Factory {
 	switch fact {
 	case "database":
 		return DatabaseFactory
-	case "filesystemm":
-		return FilesystemmFactory
+	case "filesystem":
+		return FilesystemFactory
 	default:
 		return nil
 	}
